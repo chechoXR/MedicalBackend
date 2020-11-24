@@ -10,6 +10,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 @Entity
 @Table(name =  "cita_web")
 public class CitaWeb {
@@ -19,15 +21,16 @@ public class CitaWeb {
 	private Long id;
 	
 	@Column
-	
 	private Long pacienteId;
 	
 	@Column
 	private Long medicoId;
 	
 	@Column
+	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
 	private Date inicio;
 	
+	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
 	@Column
 	private Date fin;
 

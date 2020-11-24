@@ -1,7 +1,10 @@
 package com.md.controller;
 
+import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
+import java.util.StringTokenizer;
+import java.util.TimeZone;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +63,7 @@ public class CitaWebController {
 
 		if (!optional.isPresent())
 			return ResponseEntity.notFound().build();
-		
+
 		if (medicoExistente(cita.getMedicoId()))
 			if (pacienteExistente(cita.getPacienteId()))
 				if (citaActualizable(cita)) {
@@ -73,9 +76,9 @@ public class CitaWebController {
 					return ResponseEntity.status(HttpStatus.OK).body(service.save(optional.get()));
 				} else
 					return ResponseEntity.status(HttpStatus.CONFLICT).build();
-		
+
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-		
+
 	}
 
 	@DeleteMapping("{id}")
@@ -92,23 +95,79 @@ public class CitaWebController {
 
 	private boolean citaPosible(CitaWeb cita) {
 
-		List<?> citasMedico = service.citasDelDiaMedico(cita.getMedicoId(), cita.getInicio());
-		List<?> citasPaciente = service.citasDelDiaPaciente(cita.getPacienteId(), cita.getInicio());
 		
-		System.out.println(citasMedico.size());
-		if (citasMedico.size() == 0 && citasPaciente.size()==0)
+
+		Optional<MedicoWeb> medico = mService.findById(cita.getMedicoId());
+
+		Calendar inicioMedico = Calendar.getInstance();
+		Calendar finMedico = Calendar.getInstance();
+		TimeZone zone = TimeZone.getTimeZone("UTC");
+		
+		Calendar citaMedica = Calendar.getInstance(zone);
+		citaMedica.setTime(cita.getInicio());
+		citaMedica.setTimeZone(zone);
+
+		inicioMedico.setTime(citaMedica.getTime());
+		inicioMedico.set(Calendar.SECOND, 0);
+
+		finMedico.setTime(citaMedica.getTime());
+		finMedico.set(Calendar.SECOND, 0);
+		StringTokenizer st = new StringTokenizer(medico.get().getInicio(), ":");
+
+		inicioMedico.set(Calendar.HOUR_OF_DAY, Integer.parseInt(st.nextToken()));
+		if (st.hasMoreTokens()) {
+			inicioMedico.set(Calendar.MINUTE, Integer.parseInt(st.nextToken().substring(0, 2)));
+		} else {
+			inicioMedico.set(Calendar.MINUTE, 00);
+			inicioMedico.set(Calendar.SECOND, 0);
+		}
+
+		st = new StringTokenizer(medico.get().getFin(), ":");
+
+		finMedico.set(Calendar.HOUR_OF_DAY, Integer.parseInt(st.nextToken()));
+		if (st.hasMoreTokens()) {
+			finMedico.set(Calendar.MINUTE, Integer.parseInt(st.nextToken().substring(0, 2)));
+		} else {
+			finMedico.set(Calendar.MINUTE, 00);
+			finMedico.set(Calendar.SECOND, 0);
+		}
+
+		System.out.println("Cita:			 " + citaMedica.getTime().toString());
+		System.out.println("Hora inicio de atención  " + inicioMedico.getTime().toString());
+		System.out.println("Hora fin de atención 	 " + finMedico.getTime().toString());
+//		System.out.println(citaMedica.getTime().compareTo(inicioMedico.getTime()) + " && "
+//				+ citaMedica.getTime().compareTo(finMedico.getTime()));
+		
+		boolean aTiempo = citaMedica.getTime().compareTo(inicioMedico.getTime()) >= 0
+				&& citaMedica.getTime().compareTo(finMedico.getTime()) < 0;
+		boolean antes = citaMedica.getTime().compareTo(inicioMedico.getTime()) < 0;
+		boolean despues = citaMedica.getTime().compareTo(finMedico.getTime()) >= 0;
+
+		if (aTiempo)
+			System.out.println("A tiempo");
+		else if (antes)
+			System.out.println("Antes de horario");
+		else if (despues)
+			System.out.println("Después de horario");
+		
+		
+		List<?> citasMedico = service.citasDelDiaMedico(cita.getMedicoId(), citaMedica.getTime());
+		List<?> citasPaciente = service.citasDelDiaPaciente(cita.getPacienteId(), citaMedica.getTime());
+		
+		System.out.println(citasMedico.size()>0?"Cita no disponible":"Cita disponible");
+		if (citasMedico.size() == 0 && citasPaciente.size() == 0 && aTiempo)
 			return true;
 
 		return false;
 	}
-	
+
 	private boolean citaActualizable(CitaWeb cita) {
 
 		List<?> citasMedico = service.citasDelDiaMedico(cita.getMedicoId(), cita.getInicio());
 		List<?> citasPaciente = service.citasDelDiaPaciente(cita.getPacienteId(), cita.getInicio());
-		
+
 		System.out.println(citasMedico.size());
-		if (citasMedico.size() <=1 && citasPaciente.size()==0)
+		if (citasMedico.size() <= 1 && citasPaciente.size() == 0)
 			return true;
 
 		return false;
