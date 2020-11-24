@@ -28,6 +28,7 @@ public class PacienteWebService {
 	
 	@Transactional
 	public PacienteWeb save(PacienteWeb paciente) {
+		System.out.println(paciente.getFechaNacimiento().toString());
 		return repository.save(paciente);
 	}
 
