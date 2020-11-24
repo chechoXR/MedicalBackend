@@ -57,7 +57,7 @@ public class CitaWebController {
 		return citas;
 	}
 
-	@PutMapping("{id}")
+//	@PutMapping("{id}")
 	public ResponseEntity<?> update(@PathVariable Long id, @RequestBody CitaWeb cita) {
 		Optional<CitaWeb> optional = service.findById(id);
 
@@ -103,14 +103,18 @@ public class CitaWebController {
 		Calendar finMedico = Calendar.getInstance();
 		TimeZone zone = TimeZone.getTimeZone("UTC");
 		
-		Calendar citaMedica = Calendar.getInstance(zone);
-		citaMedica.setTime(cita.getInicio());
-		citaMedica.setTimeZone(zone);
+		Calendar citaMedicaInicio = Calendar.getInstance(zone);
+		citaMedicaInicio.setTime(cita.getInicio());
+		citaMedicaInicio.setTimeZone(zone);
 
-		inicioMedico.setTime(citaMedica.getTime());
+		Calendar citaMedicaFin = Calendar.getInstance(zone);
+		citaMedicaFin.setTime(cita.getFin());
+		citaMedicaFin.setTimeZone(zone);
+		
+		inicioMedico.setTime(citaMedicaInicio.getTime());
 		inicioMedico.set(Calendar.SECOND, 0);
 
-		finMedico.setTime(citaMedica.getTime());
+		finMedico.setTime(citaMedicaInicio.getTime());
 		finMedico.set(Calendar.SECOND, 0);
 		StringTokenizer st = new StringTokenizer(medico.get().getInicio(), ":");
 
@@ -132,16 +136,16 @@ public class CitaWebController {
 			finMedico.set(Calendar.SECOND, 0);
 		}
 
-		System.out.println("Cita:			 " + citaMedica.getTime().toString());
+		System.out.println("Cita:			 " + citaMedicaInicio.getTime().toString());
 		System.out.println("Hora inicio de atención  " + inicioMedico.getTime().toString());
 		System.out.println("Hora fin de atención 	 " + finMedico.getTime().toString());
 //		System.out.println(citaMedica.getTime().compareTo(inicioMedico.getTime()) + " && "
 //				+ citaMedica.getTime().compareTo(finMedico.getTime()));
-		
-		boolean aTiempo = citaMedica.getTime().compareTo(inicioMedico.getTime()) >= 0
-				&& citaMedica.getTime().compareTo(finMedico.getTime()) < 0;
-		boolean antes = citaMedica.getTime().compareTo(inicioMedico.getTime()) < 0;
-		boolean despues = citaMedica.getTime().compareTo(finMedico.getTime()) >= 0;
+		//Dividir cita medica en inicio y fin para garantizar la franja horaria de 1 hora.
+		boolean aTiempo = citaMedicaInicio.getTime().compareTo(inicioMedico.getTime()) >= 0
+				&& citaMedicaFin.getTime().compareTo(finMedico.getTime()) < 0;
+		boolean antes = citaMedicaInicio.getTime().compareTo(inicioMedico.getTime()) < 0;
+		boolean despues = citaMedicaInicio.getTime().compareTo(finMedico.getTime()) >= 0;
 
 		if (aTiempo)
 			System.out.println("A tiempo");
@@ -151,8 +155,8 @@ public class CitaWebController {
 			System.out.println("Después de horario");
 		
 		
-		List<?> citasMedico = service.citasDelDiaMedico(cita.getMedicoId(), citaMedica.getTime());
-		List<?> citasPaciente = service.citasDelDiaPaciente(cita.getPacienteId(), citaMedica.getTime());
+		List<?> citasMedico = service.citasDelDiaMedico(cita.getMedicoId(), citaMedicaInicio.getTime());
+		List<?> citasPaciente = service.citasDelDiaPaciente(cita.getPacienteId(), citaMedicaInicio.getTime());
 		
 		System.out.println(citasMedico.size()>0?"Cita no disponible":"Cita disponible");
 		if (citasMedico.size() == 0 && citasPaciente.size() == 0 && aTiempo)
@@ -162,12 +166,71 @@ public class CitaWebController {
 	}
 
 	private boolean citaActualizable(CitaWeb cita) {
+		
+		Optional<MedicoWeb> medico = mService.findById(cita.getMedicoId());
 
+		Calendar inicioMedico = Calendar.getInstance();
+		Calendar finMedico = Calendar.getInstance();
+		TimeZone zone = TimeZone.getTimeZone("UTC");
+		
+		Calendar citaMedicaInicio = Calendar.getInstance(zone);
+		citaMedicaInicio.setTime(cita.getInicio());
+		citaMedicaInicio.setTimeZone(zone);
+
+		Calendar citaMedicaFin = Calendar.getInstance(zone);
+		citaMedicaFin.setTime(cita.getFin());
+		citaMedicaFin.setTimeZone(zone);
+		
+		inicioMedico.setTime(citaMedicaInicio.getTime());
+		inicioMedico.set(Calendar.SECOND, 0);
+
+		finMedico.setTime(citaMedicaInicio.getTime());
+		finMedico.set(Calendar.SECOND, 0);
+		StringTokenizer st = new StringTokenizer(medico.get().getInicio(), ":");
+
+		inicioMedico.set(Calendar.HOUR_OF_DAY, Integer.parseInt(st.nextToken()));
+		if (st.hasMoreTokens()) {
+			inicioMedico.set(Calendar.MINUTE, Integer.parseInt(st.nextToken().substring(0, 2)));
+		} else {
+			inicioMedico.set(Calendar.MINUTE, 00);
+			inicioMedico.set(Calendar.SECOND, 0);
+		}
+
+		st = new StringTokenizer(medico.get().getFin(), ":");
+
+		finMedico.set(Calendar.HOUR_OF_DAY, Integer.parseInt(st.nextToken()));
+		if (st.hasMoreTokens()) {
+			finMedico.set(Calendar.MINUTE, Integer.parseInt(st.nextToken().substring(0, 2)));
+		} else {
+			finMedico.set(Calendar.MINUTE, 00);
+			finMedico.set(Calendar.SECOND, 0);
+		}
+
+		System.out.println("Cita:			 " + citaMedicaInicio.getTime().toString());
+		System.out.println("Hora inicio de atención  " + inicioMedico.getTime().toString());
+		System.out.println("Hora fin de atención 	 " + finMedico.getTime().toString());
+//		System.out.println(citaMedica.getTime().compareTo(inicioMedico.getTime()) + " && "
+//				+ citaMedica.getTime().compareTo(finMedico.getTime()));
+		//Dividir cita medica en inicio y fin para garantizar la franja horaria de 1 hora.
+		boolean aTiempo = citaMedicaInicio.getTime().compareTo(inicioMedico.getTime()) >= 0
+				&& citaMedicaFin.getTime().compareTo(finMedico.getTime()) < 0;
+		boolean antes = citaMedicaInicio.getTime().compareTo(inicioMedico.getTime()) < 0;
+		boolean despues = citaMedicaInicio.getTime().compareTo(finMedico.getTime()) >= 0;
+
+		if (aTiempo)
+			System.out.println("A tiempo");
+		else if (antes)
+			System.out.println("Antes de horario");
+		else if (despues)
+			System.out.println("Después de horario");
+		
+		
+		
 		List<?> citasMedico = service.citasDelDiaMedico(cita.getMedicoId(), cita.getInicio());
 		List<?> citasPaciente = service.citasDelDiaPaciente(cita.getPacienteId(), cita.getInicio());
 
 		System.out.println(citasMedico.size());
-		if (citasMedico.size() <= 1 && citasPaciente.size() == 0)
+		if (citasMedico.size() <= 1 && citasPaciente.size() == 0 && aTiempo)
 			return true;
 
 		return false;
