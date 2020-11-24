@@ -21,20 +21,20 @@ public class PacienteWeb {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 	
-	@Column
+	@Column(nullable = false)
 	private String nombre;
 	
-	@Column
+	@Column(nullable = false)
 	@DateTimeFormat(iso = ISO.DATE)
 	private Date fechaNacimiento;
 	
-	@Column(unique = true)
+	@Column(unique = true, nullable = false)
 	private String identificacion;
 	
-	@Column
+	@Column(nullable = false)
 	private String tipoIdentificacion;
 	
-	@Column
+	@Column(nullable = false)
 	private String EPS;
 	
 	@Column

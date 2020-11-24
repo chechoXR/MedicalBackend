@@ -20,18 +20,18 @@ public class CitaWeb {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@Column
+	@Column(nullable = false)
 	private Long pacienteId;
 	
-	@Column
+	@Column(nullable = false)
 	private Long medicoId;
 	
-	@Column
+	@Column(nullable = false)
 	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
 	private Date inicio;
 	
 	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-	@Column
+	@Column(nullable = false)
 	private Date fin;
 
 	public Long getId() {

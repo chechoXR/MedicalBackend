@@ -15,28 +15,28 @@ public class MedicoWeb{
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 	
-	@Column
+	@Column(nullable = false)
 	private String nombre;
 	
-	@Column(unique = true)
+	@Column(unique = true, nullable = false)
 	private String identificacion;
 	
-	@Column(name = "tarjetaProfesional",unique = true)
+	@Column(name = "tarjetaProfesional",unique = true, nullable = false)
 	private String numeroTarjetaProfesional;
 	
-	@Column
+	@Column(nullable = false)
 	private String tipoIdentificacion;
 	
-	@Column
+	@Column(nullable = false)
 	private float aniosExperiencia;
 	
-	@Column
+	@Column(nullable = false)
 	private String especialidad;
 	
-	@Column()
+	@Column(nullable = false)
 	private String inicio;
 	
-	@Column
+	@Column(nullable = false)
 	private String fin;
 	
 	
