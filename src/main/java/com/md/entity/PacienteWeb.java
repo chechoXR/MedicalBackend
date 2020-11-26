@@ -37,7 +37,7 @@ public class PacienteWeb {
 	@Column(nullable = false)
 	private String EPS;
 	
-	@Column
+	@Column(columnDefinition="TEXT" ,length = 255)
 	private String historiaClinica;
 
 	public long getId() {
