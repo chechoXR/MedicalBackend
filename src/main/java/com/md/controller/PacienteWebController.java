@@ -34,9 +34,7 @@ public class PacienteWebController {
 	
 	@GetMapping()
 	public List<PacienteWeb> findAll(){
-		List<PacienteWeb> pacientes = StreamSupport.stream(service.findAll().spliterator(), false)
-				.collect(Collectors.toList());
-		return pacientes;
+		return service.findAll();
 	}
 	
 	@PutMapping("{id}")
