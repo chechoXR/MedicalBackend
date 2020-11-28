@@ -1,41 +1,40 @@
 package com.md.service;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.md.entity.PacienteWeb;
-import com.md.repository.PacienteWebRepository;
+
+import com.md.entity.EPS;
+import com.md.repository.EPS_Repository;
 
 @Service
-public class PacienteWebService {
+public class EPS_Service {
 
 	@Autowired
-	PacienteWebRepository repository;
+	EPS_Repository repository;
 	
 	
 	@Transactional(readOnly = true)
-	public List<PacienteWeb> findAll() {
-		return repository.getAll();
-	}
+	public Iterable<EPS> findAll() {
+		return repository.findAll();
+	}	
 	
 	@Transactional(readOnly = true)
-	public Optional<PacienteWeb> findById(Long id) {
+	public Optional<EPS> findById(Long id) {
 		return repository.findById(id);
 	}
 	
 	@Transactional
-	public PacienteWeb save(PacienteWeb paciente) {
-		System.out.println(paciente.getFechaNacimiento().toString());
-		return repository.save(paciente);
+	public EPS save(EPS eps) {
+		return repository.save(eps);
 	}
 
 	@Transactional
 	public void deleteById(Long id) {
 		repository.deleteById(id);
 	}
-	
 
+	
 }
