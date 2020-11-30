@@ -61,7 +61,7 @@ public class TipoIdentificacionController {
 		if(!optional.isPresent())
 			return ResponseEntity.notFound().build();
 		
-		return ResponseEntity.status(HttpStatus.FOUND).body(optional.get());
+		return ResponseEntity.status(HttpStatus.OK).body(optional.get());
 	}
 	
 	@DeleteMapping("{id}")
