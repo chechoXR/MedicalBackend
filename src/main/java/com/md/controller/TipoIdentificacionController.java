@@ -53,6 +53,17 @@ public class TipoIdentificacionController {
 		return ResponseEntity.accepted().body(TipoIdentificacion);
 	}
 	
+	
+	@GetMapping("/{id}")
+	public ResponseEntity<?> findById(@PathVariable Long id){
+		Optional<TipoIdentificacion> optional = service.findById(id);
+		
+		if(!optional.isPresent())
+			return ResponseEntity.notFound().build();
+		
+		return ResponseEntity.status(HttpStatus.FOUND).body(optional.get());
+	}
+	
 	@DeleteMapping("{id}")
 	public ResponseEntity<?> delete(@PathVariable Long id){
 		Optional<TipoIdentificacion> optional = service.findById(id);

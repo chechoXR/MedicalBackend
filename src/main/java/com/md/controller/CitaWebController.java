@@ -57,6 +57,16 @@ public class CitaWebController {
 		List<CitaWeb> citas = StreamSupport.stream(service.findAll().spliterator(), false).collect(Collectors.toList());
 		return citas;
 	}
+	
+	@GetMapping("/{id}")
+	public ResponseEntity<?> findById(@PathVariable Long id){
+		Optional<CitaWeb> optional = service.findById(id);
+		
+		if(!optional.isPresent())
+			return ResponseEntity.notFound().build();
+		
+		return ResponseEntity.status(HttpStatus.FOUND).body(optional.get());
+	}
 
 //	@PutMapping("{id}")
 	public ResponseEntity<?> update(@PathVariable Long id, @RequestBody CitaWeb cita) {

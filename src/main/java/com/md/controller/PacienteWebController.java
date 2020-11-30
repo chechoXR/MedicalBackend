@@ -35,6 +35,16 @@ public class PacienteWebController {
 		return service.findAll();
 	}
 	
+	@GetMapping("/{id}")
+	public ResponseEntity<?> findById(@PathVariable Long id){
+		Optional<PacienteWeb> optional = service.findById(id);
+		
+		if(!optional.isPresent())
+			return ResponseEntity.notFound().build();
+		
+		return ResponseEntity.status(HttpStatus.FOUND).body(optional.get());
+	}
+	
 	@PutMapping("{id}")
 	public ResponseEntity<?> update(@PathVariable Long id, @RequestBody PacienteWeb paciente){
 		Optional<PacienteWeb> optional = service.findById(id);

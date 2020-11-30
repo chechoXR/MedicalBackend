@@ -40,6 +40,17 @@ public class MedicoWebController {
 		return medicos;
 	}
 	
+	@GetMapping("/{id}")
+	public ResponseEntity<?> findById(@PathVariable Long id){
+		Optional<MedicoWeb> optional = service.findById(id);
+		
+		if(!optional.isPresent())
+			return ResponseEntity.notFound().build();
+		
+		return ResponseEntity.status(HttpStatus.FOUND).body(optional.get());
+	}
+	
+	
 	@PutMapping("{id}")
 	public ResponseEntity<?> update(@PathVariable Long id, @RequestBody MedicoWeb medico){
 		Optional<MedicoWeb> optional = service.findById(id);
