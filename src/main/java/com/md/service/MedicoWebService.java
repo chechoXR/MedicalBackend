@@ -17,7 +17,7 @@ public class MedicoWebService {
 	
 	@Transactional(readOnly = true)
 	public Iterable<MedicoWeb> findAll() {
-		return repository.findAll();
+		return repository.getAll();
 	}
 	
 	@Transactional(readOnly = true)
