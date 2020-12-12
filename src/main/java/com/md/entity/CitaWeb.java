@@ -21,10 +21,10 @@ public class CitaWeb {
 	private Long id;
 	
 	@Column(nullable = false)
-	private Long pacienteId;
+	private String pacienteId;
 	
 	@Column(nullable = false)
-	private Long medicoId;
+	private String medicoId;
 	
 	@Column(nullable = false)
 	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
@@ -42,19 +42,19 @@ public class CitaWeb {
 		this.id = id;
 	}
 
-	public Long getPacienteId() {
+	public String getPacienteId() {
 		return pacienteId;
 	}
 
-	public void setPacienteId(Long pacienteId) {
+	public void setPacienteId(String pacienteId) {
 		this.pacienteId = pacienteId;
 	}
 
-	public Long getMedicoId() {
+	public String getMedicoId() {
 		return medicoId;
 	}
 
-	public void setMedicoId(Long medicoId) {
+	public void setMedicoId(String medicoId) {
 		this.medicoId = medicoId;
 	}
 

@@ -42,8 +42,8 @@ public class CitaWebController {
 
 	@PostMapping
 	public ResponseEntity<CitaWeb> create(@RequestBody CitaWeb cita) {
-		if (medicoExistente(cita.getMedicoId()))
-			if (pacienteExistente(cita.getPacienteId()))
+		if (medicoExistente(Long.getLong(cita.getMedicoId())))
+			if (pacienteExistente(Long.getLong(cita.getPacienteId())))
 				if (citaPosible(cita))
 					return ResponseEntity.status(HttpStatus.CREATED).body(service.save(cita));
 				else
@@ -75,8 +75,8 @@ public class CitaWebController {
 		if (!optional.isPresent())
 			return ResponseEntity.notFound().build();
 
-		if (medicoExistente(cita.getMedicoId()))
-			if (pacienteExistente(cita.getPacienteId()))
+		if (medicoExistente(Long.getLong(cita.getMedicoId())))
+			if ( pacienteExistente(Long.getLong(cita.getPacienteId())) )
 				if (citaActualizable(cita)) {
 
 					optional.get().setPacienteId(cita.getPacienteId());
@@ -108,7 +108,7 @@ public class CitaWebController {
 
 		
 
-		Optional<MedicoWeb> medico = mService.findById(cita.getMedicoId());
+		Optional<MedicoWeb> medico = mService.findById(Long.getLong(cita.getMedicoId()));
 
 		Calendar inicioMedico = Calendar.getInstance();
 		Calendar finMedico = Calendar.getInstance();
@@ -166,8 +166,8 @@ public class CitaWebController {
 			System.out.println("Después de horario");
 		
 		
-		List<?> citasMedico = service.citasDelDiaMedico(cita.getMedicoId(), citaMedicaInicio.getTime());
-		List<?> citasPaciente = service.citasDelDiaPaciente(cita.getPacienteId(), citaMedicaInicio.getTime());
+		List<?> citasMedico = service.citasDelDiaMedico(Long.getLong(cita.getMedicoId()), citaMedicaInicio.getTime());
+		List<?> citasPaciente = service.citasDelDiaPaciente(Long.getLong(cita.getPacienteId()), citaMedicaInicio.getTime());
 		
 		System.out.println(citasMedico.size()>0?"Cita no disponible":"Cita disponible");
 		if (citasMedico.size() == 0 && citasPaciente.size() == 0 && aTiempo)
@@ -178,7 +178,7 @@ public class CitaWebController {
 
 	private boolean citaActualizable(CitaWeb cita) {
 		
-		Optional<MedicoWeb> medico = mService.findById(cita.getMedicoId());
+		Optional<MedicoWeb> medico = mService.findById(Long.getLong(cita.getMedicoId()));
 
 		Calendar inicioMedico = Calendar.getInstance();
 		Calendar finMedico = Calendar.getInstance();
@@ -237,8 +237,8 @@ public class CitaWebController {
 		
 		
 		
-		List<?> citasMedico = service.citasDelDiaMedico(cita.getMedicoId(), cita.getInicio());
-		List<?> citasPaciente = service.citasDelDiaPaciente(cita.getPacienteId(), cita.getInicio());
+		List<?> citasMedico = service.citasDelDiaMedico(Long.getLong(cita.getMedicoId()), cita.getInicio());
+		List<?> citasPaciente = service.citasDelDiaPaciente(Long.getLong(cita.getPacienteId()), cita.getInicio());
 
 		System.out.println(citasMedico.size());
 		if (citasMedico.size() <= 1 && citasPaciente.size() == 0 && aTiempo)

@@ -18,8 +18,8 @@ public class CitaService {
 	CitaWebRepository repository;
 	
 	@Transactional(readOnly = true)
-	public Iterable<CitaWeb> findAll() {
-		return repository.findAll();
+	public List<CitaWeb> findAll() {
+		return repository.getAll();
 	}
 	
 	@Transactional(readOnly = true)
