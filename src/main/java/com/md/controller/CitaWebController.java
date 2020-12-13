@@ -42,6 +42,7 @@ public class CitaWebController {
 
 	@PostMapping
 	public ResponseEntity<CitaWeb> create(@RequestBody CitaWeb cita) {
+		System.out.println("Cita: " + cita.toString());
 		if (medicoExistente(Long.parseLong(cita.getMedicoId())))
 			if (pacienteExistente(Long.parseLong(cita.getPacienteId())))
 				if (citaPosible(cita))
@@ -169,7 +170,7 @@ public class CitaWebController {
 		List<?> citasMedico = service.citasDelDiaMedico(Long.parseLong(cita.getMedicoId()), citaMedicaInicio.getTime());
 		List<?> citasPaciente = service.citasDelDiaPaciente(Long.parseLong(cita.getPacienteId()), citaMedicaInicio.getTime());
 		
-		//System.out.println(citasMedico.size()>0?"Franja no disponible":"Franja disponible");
+		System.out.println(citasMedico.size()>0?"Franja no disponible":"Franja disponible");
 		if (citasMedico.size() == 0 && citasPaciente.size() == 0 && aTiempo)
 			return true;
 
