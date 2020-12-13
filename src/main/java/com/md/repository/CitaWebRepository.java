@@ -20,6 +20,6 @@ public interface CitaWebRepository extends JpaRepository<CitaWeb, Long>{
 	
 	
 	//@Query(value = "select cita_web.id, cita_web.inicio, cita_web.fin, paciente_web.nombre, medico_web.nombre from cita_web left join paciente_web on cita_web.paciente_id = paciente_web.id left join medico_web on cita_web.medico_id=medico_web.id;", nativeQuery = true)
-	@Query(value = "select cita_web.id, cita_web.inicio, cita_web.fin, paciente_web.nombre, medico_web.nombre from cita_web left join paciente_web on CAST(cita_web.paciente_id AS bigint) = paciente_web.id left join medico_web on CAST(cita_web.medico_id AS bigint) = medico_web.id;", nativeQuery = true)
+	@Query(value = "select cita_web.id, cita_web.inicio, cita_web.fin, paciente_web.nombre as paciente, medico_web.nombre as medico from cita_web left join paciente_web on CAST(cita_web.paciente_id AS bigint) = paciente_web.id left join medico_web on CAST(cita_web.medico_id AS bigint) = medico_web.id;", nativeQuery = true)
 	public List<CitaWeb> getAll();
 }
