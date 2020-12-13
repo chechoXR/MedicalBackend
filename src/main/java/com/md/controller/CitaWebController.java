@@ -55,8 +55,8 @@ public class CitaWebController {
 
 	@GetMapping()
 	public List<CitaWeb> findAll() {
-		List<CitaWeb> citas = StreamSupport.stream(service.findAll().spliterator(), false).collect(Collectors.toList());
-		return citas;
+		
+		return service.findAll();
 	}
 	
 	@GetMapping("/{id}")
