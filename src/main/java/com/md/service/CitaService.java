@@ -38,8 +38,8 @@ public class CitaService {
 	}
 	
 	@Transactional
-	public CitaWeb save(CitaWeb paciente) {
-		return repository.save(paciente);
+	public CitaWeb save(CitaWeb cita) {
+		return repository.save(cita);
 	}
 
 	@Transactional
